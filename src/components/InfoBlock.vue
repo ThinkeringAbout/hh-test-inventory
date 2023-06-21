@@ -19,16 +19,6 @@
   align-items: center;
   gap: 25px;
   padding: 25px;
-  h1 {
-    font-size: 24px;
-    color: #fff;
-  }
-  p {
-    font-size: 20px;
-    color: #fff;
-    text-align: center;
-    line-height: 3rem;
-  }
   img {
     height: 45%;
     width: 100%;
