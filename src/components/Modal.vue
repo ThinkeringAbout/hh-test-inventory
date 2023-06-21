@@ -55,29 +55,44 @@ const handleDeleteConfirmClick = () => {
         </g>
       </svg>
     </button>
-    <div v-if="isDeleting" class="delete-form">
-      <div style="width: 100%">
-        <input
-          v-model="quantity"
-          placeholder="Введите количество"
-          type="number"
-          name=""
-          id=""
-        />
+    <transition name="slide-fade">
+      <div v-if="isDeleting" class="delete-form">
+        <div style="width: 100%">
+          <input
+            v-model="quantity"
+            placeholder="Введите количество"
+            type="number"
+            name=""
+            id=""
+          />
+        </div>
+        <div style="display: flex; justify-content: space-between; width: 100%">
+          <button @click="isDeleting = false" class="cancel-button">
+            Отмена
+          </button>
+          <button @click="handleDeleteConfirmClick" class="confirm-button">
+            Подтвердить
+          </button>
+        </div>
       </div>
-      <div style="display: flex; justify-content: space-between; width: 100%">
-        <button @click="isDeleting = false" class="cancel-button">
-          Отмена
-        </button>
-        <button @click="handleDeleteConfirmClick" class="confirm-button">
-          Подтвердить
-        </button>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.2s ease-in-out;
+}
+.slide-fade-enter-from {
+  transform: translateY(10px);
+  opacity: 0;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
 .modal {
   width: 45%;
   height: 100%;

@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import type { Ref } from "vue";
 import Modal from "./Modal.vue";
 
-const arr = new Array(25).fill("");
+const arr = new Array(23).fill("");
 const items = ref(arr);
 let isModalShow = ref(false);
 let chosenItem = ref(null);
 const styleList: Ref<HTMLDivElement[]> = ref([]);
 
-items.value[0] = {
-  id: 1,
-  color: "red",
-  quantity: 4,
-};
-items.value[1] = {
-  id: 0,
-  color: "green",
-  quantity: 10,
-};
+onMounted(() => {
+  if (localStorage.getItem("initial-array")) {
+    items.value = JSON.parse(String(localStorage.getItem("initial-array")));
+  } else {
+    const initialArray = [
+      { id: 1, color: "red", quantity: 4 },
+      { id: 2, color: "green", quantity: 10 },
+      ...arr,
+    ];
+    localStorage.setItem("initial-array", JSON.stringify(initialArray));
+    items.value = initialArray;
+  }
+});
 
 const closeModal = () => {
   isModalShow.value = false;
@@ -41,10 +44,11 @@ const onDrop = (event: DragEvent, newIndex: number) => {
     const item = items.value[itemIndex];
     items.value[newIndex] = item;
     items.value[itemIndex] = "";
+    saveArray();
   }
 };
 
-const test = (item) => {
+const openModal = (item) => {
   if (item) {
     chosenItem.value = item;
     isModalShow.value = true;
@@ -54,22 +58,27 @@ const test = (item) => {
 };
 
 const deleteItem = (quantity: number) => {
-  const itemIndex = items.value.findIndex(item => item.id === chosenItem.value.id);
+  const itemIndex = items.value.findIndex(
+    (item) => item.id === chosenItem.value.id
+  );
   if (items.value[itemIndex].quantity === quantity) {
-    items.value[itemIndex] = ""
+    items.value[itemIndex] = "";
   } else {
-    items.value[itemIndex].quantity -= quantity
+    items.value[itemIndex].quantity -= quantity;
   }
-}
+  saveArray();
+};
 
-
+const saveArray = () => {
+  localStorage.setItem("initial-array", JSON.stringify(items.value));
+};
 </script>
 <template>
   <div class="content_container inventory">
     <div
       ref="styleList"
       draggable="true"
-      @click="test(item)"
+      @click="openModal(item)"
       @dragenter.prevent
       @dragover.prevent
       @drop="onDrop($event, index)"
@@ -85,11 +94,31 @@ const deleteItem = (quantity: number) => {
       />
       <div v-if="item" class="quantity">{{ item.quantity }}</div>
     </div>
-    <Modal v-if="isModalShow" :chosen-item="chosenItem" @close-modal="closeModal" @delete-item="deleteItem" />
+    <transition name="slide-fade">
+      <Modal
+        v-if="isModalShow"
+        :chosen-item="chosenItem"
+        @close-modal="closeModal"
+        @delete-item="deleteItem"
+      />
+    </transition>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.2s ease-in-out;
+}
+.slide-fade-enter-from {
+  transform: translateX(10px);
+  opacity: 0;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
 .inventory {
   display: flex;
   flex-wrap: wrap;
