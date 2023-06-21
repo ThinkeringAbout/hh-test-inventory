@@ -77,7 +77,7 @@ const saveArray = () => {
   <div class="content_container inventory">
     <div
       ref="styleList"
-      draggable="true"
+      :draggable="item ? true : false"
       @click="openModal(item)"
       @dragenter.prevent
       @dragover.prevent

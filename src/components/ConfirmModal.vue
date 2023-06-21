@@ -14,8 +14,9 @@ const handleDeleteCancelClick = () => {
 
 <template>
   <div class="delete-form">
-    <div style="width: 100%">
+    <div class="w-100">
       <input
+        class="w-100"
         v-model="quantity"
         placeholder="Введите количество"
         type="number"
@@ -23,7 +24,7 @@ const handleDeleteCancelClick = () => {
         id=""
       />
     </div>
-    <div style="display: flex; justify-content: space-between; width: 100%">
+    <div class="buttons-container w-100">
       <button @click="handleDeleteCancelClick" class="cancel-button">
         Отмена
       </button>
@@ -46,8 +47,11 @@ const handleDeleteCancelClick = () => {
   background: #272727;
   display: flex;
   flex-direction: column;
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+  }
   input {
-    width: 100%;
     padding: 20px 15px;
     font-size: 30px;
     border-radius: 4px;
