@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import ConfirmModal from "./ConfirmModal.vue";
 const emit = defineEmits(["close-modal", "delete-item"]);
 const props = defineProps(["chosenItem"]);
 let isDeleting = ref(false);
-let quantity = ref(1);
 const closeModal = () => {
   isDeleting.value = false;
   emit("close-modal");
 };
 
-const handleDeleteConfirmClick = () => {
-  if (quantity.value > 0 && quantity.value <= props.chosenItem.quantity) {
-    emit("delete-item", quantity.value);
+const handleDeleteConfirmClick = (quantity: number) => {
+  if (quantity > 0 && quantity <= props.chosenItem.quantity) {
+    emit("delete-item", quantity);
     closeModal();
   }
+};
+
+const handleDeleteCancelClick = () => {
+  isDeleting.value = false;
 };
 </script>
 
@@ -56,25 +60,11 @@ const handleDeleteConfirmClick = () => {
       </svg>
     </button>
     <transition name="slide-fade">
-      <div v-if="isDeleting" class="delete-form">
-        <div style="width: 100%">
-          <input
-            v-model="quantity"
-            placeholder="Введите количество"
-            type="number"
-            name=""
-            id=""
-          />
-        </div>
-        <div style="display: flex; justify-content: space-between; width: 100%">
-          <button @click="isDeleting = false" class="cancel-button">
-            Отмена
-          </button>
-          <button @click="handleDeleteConfirmClick" class="confirm-button">
-            Подтвердить
-          </button>
-        </div>
-      </div>
+      <ConfirmModal
+        @delete-item="handleDeleteConfirmClick"
+        @cancel-delete="handleDeleteCancelClick"
+        v-if="isDeleting"
+      />
     </transition>
   </div>
 </template>
@@ -121,54 +111,6 @@ const handleDeleteConfirmClick = () => {
     border: none;
     color: #fff;
     cursor: pointer;
-  }
-  .delete-form {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    padding: 25px;
-    gap: 25px;
-    background: #272727;
-    display: flex;
-    flex-direction: column;
-    input {
-      width: 100%;
-      padding: 20px 15px;
-      font-size: 30px;
-      border-radius: 4px;
-      border: 1px solid $border_color;
-      outline: none;
-      background: none;
-      color: #fff;
-      &::-webkit-inner-spin-button,
-      &::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-    }
-    button {
-      padding: 20px 10px;
-      width: 47%;
-      font-size: 20px;
-    }
-    .confirm-button {
-      background: $delete_color;
-      border-radius: 8px;
-      outline: none;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-    }
-    .cancel-button {
-      background: #fff;
-      border-radius: 8px;
-      outline: none;
-      border: none;
-      color: #000;
-      cursor: pointer;
-    }
   }
   .close-button {
     position: absolute;
